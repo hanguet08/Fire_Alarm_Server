@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:id="@+id/detailRoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtNameRoomDetailDevice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name room" />
+
+        <TextView
+            android:id="@+id/txtPositionDetailDevice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Position" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtOwnerDetailDevice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Owner" />
+
+            <TextView
+                android:id="@+id/txtAreaDetailDevice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Area" />
+        </LinearLayout>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewDevice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/detailRoom"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingBottom="60dp"
+        android:scrollbars="vertical"
+        android:layout_marginTop="10dp"/>
+    <ImageView
+        android:id="@+id/btnAddNewDevice"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="#45FFFFFF"
+        android:layout_margin="5dp"
+        android:src="@drawable/add_device"/>
+    <TextView
+        android:id="@+id/tvNoDeviceList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="You don't have any device list."
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

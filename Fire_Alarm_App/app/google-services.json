@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "303820727588",
+    "project_id": "fire-alarm-system-c6a01",
+    "storage_bucket": "fire-alarm-system-c6a01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303820727588:android:d48ead18e31b424bf87fb1",
+        "android_client_info": {
+          "package_name": "vn.edu.hust.sis.khangnv.firealarmapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "303820727588-ef477vncdp9vie1oq50fcuogrr5s1shv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT6nQu5UvRuy5Z6ASPFx6cIvA7rI94lis"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "303820727588-ef477vncdp9vie1oq50fcuogrr5s1shv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

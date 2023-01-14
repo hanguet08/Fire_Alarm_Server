@@ -1,0 +1,1540 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Documentation",
+    "description": "A fire alarm system warns people when smoke, fire, carbon monoxide or other fire-related emergencies are detected.",
+    "termsOfService": "http://swagger.io/terms/",
+    "version": "1.0.11"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "https://fire-alarm12.herokuapp.com"
+    }
+  ],
+  
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Use for authenticate",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "User",
+      "description": "Use for manage user",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "House",
+      "description": "Use for manage house",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "Room",
+      "description": "Use for manage room",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "Device",
+      "description": "Use for manage device",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "Notification",
+      "description": "Use for manage notification",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "paths": {
+    "/auth/user/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login to server",
+        "description": "",
+        "operationId": "login",
+        "requestBody": {
+          "description": "Email and password are required",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Login failure"
+          }
+        }
+      }
+    },
+    "/auth/user/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Register user",
+        "description": "",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Register"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Register successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDtoNoPass"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Register failure"
+          }
+        }
+      }
+    },
+    "/auth/user/logout": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logs user out the system",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "Logout successfully"
+          },
+          "4xx": {
+            "description": "Logout failure"
+          }
+        }
+      }
+    },
+    "/auth/refresh-token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh access token",
+        "operationId": "refresh_access_token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties":
+                {
+                  "refreshToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzI4MDdmMGFlN2IxMWU4MDhiNDE0MDEiLCJlbWFpbCI6ImFkbWluLm52QGdtYWlsLmNvbSIsImlhdCI6MTY2MzU4NTkxMSwiZXhwIjoxNiY0NDQ5OTExfQ.kBp1OaheUsRPblOVs83-iy_lrda_Gpu6PGKr52Uyb9c"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Refresh access token successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "example": "coJH-MckTEq7tkhCtDGkyg:APA91bH0pnoIvq58x-a0wFU2sQrMpeY6XDUOzH_otuK34Qb31l0VMCv3t8FNs6XDWsDQsGNKPEMKlooRVwaC4czNOoE85zi0RSnMLkBIJTWQijXk_B317NH-kodchknseNMDGvAiGIkE"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Refresh access token failure"
+          }
+        }
+      }
+    },
+
+    "/api/v1/users/info": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get one user",
+        "description": "This can only be done by the logged in.",
+        "operationId": "getUserLogin",
+        "responses": {
+          "200": {
+            "description": "Get user successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDtoNoPass"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get user failure"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Update user",
+        "description": "This can only be done by the logged in.",
+        "operationId": "updateUser",
+        "requestBody": {
+          "description": "Update an existent user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update user successfully"
+          },
+          "4xx": {
+            "description": "Update user failure"
+          }
+        }
+      }
+    },
+    "/api/v1/users/change-password": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Change password for account",
+        "description": "",
+        "operationId": "change-password",
+        "requestBody": {
+          "description": "Old password and new password are required",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["oldPassword", "newPassword"],
+                "properties": {
+                  "oldPassword": {
+                    "type": "string",
+                    "example": "123456"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "example": "1234567"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Change password successfully"
+          },
+          "4xx": {
+            "description": "Change password failure"
+          }
+        }
+      }
+    },
+    "/api/v1/users/tokenFCM": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Save token FCM for account",
+        "description": "",
+        "operationId": "Save_token_FCM",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fcmToken"],
+                "properties": {
+                  "fcmToken": {
+                    "type": "string",
+                    "example": "coJH-MckTEq7tkhCtDGkyg:APA91bH0pnoIvq58x-a0wFU2sQrMpeY6XDUOzH_otuK34Qb31l0VMCv3t8FNs6XDWsDQsGNKPEMKlooRVwaC4czNOoE85zi0RSnMLkBIJTWQijXk_B317NH-kodchknseNMDGvAiGIkE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Save token FCM successfully"
+          },
+          "4xx": {
+            "description": "Save token FCM failure"
+          }
+        }
+      }
+    },
+    
+    "/api/v1/houses": {
+      "get": {
+        "tags": [
+          "House"
+        ],
+        "summary": "Get all houses of user",
+        "description": "This can only be done by the logged in.",
+        "operationId": "get_all_houses",
+        "responses": {
+          "200": {
+            "description": "Get list of houses successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HouseDto"
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get list of houses failure"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "House"
+        ],
+        "summary": "Insert new house",
+        "description": "",
+        "operationId": "Insert_new_house",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/CreateHouseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Insert house successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HouseDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Insert house failure"
+          }
+        }
+      }
+    },
+    "/api/v1/houses/{id}": {
+      "get": {
+        "tags": [
+          "House"
+        ],
+        "summary": "Get one house",
+        "description": "This can only be done by the logged in.",
+        "operationId": "get_one_houses",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of house that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get house successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/HouseDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get house failure"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "House"
+        ],
+        "summary": "Update an existing house",
+        "description": "Update an existing house",
+        "operationId": "update_house",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of house that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update an existent house",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHouseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update house successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HouseDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Update house failure"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "House"
+        ],
+        "summary": "Delete an existing house",
+        "description": "Delete an existing house",
+        "operationId": "delete_house",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of house that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete house successfully"
+          },
+          "4xx": {
+            "description": "Delete house failure"
+          }
+        }
+      }
+    },
+
+    "/api/v1/rooms": {
+      "get": {
+        "tags": [
+          "Room"
+        ],
+        "summary": "Get all rooms of room",
+        "description": "This can only be done by the logged in.",
+        "operationId": "get_all_rooms",
+        "parameters": [
+          {
+            "name": "houseId",
+            "in": "query",
+            "description": "HouseId values that need to be considered for filter",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "631899ed43d6e8be278a1691"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get list of rooms successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomDto"
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get list of rooms failure"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Room"
+        ],
+        "summary": "Insert new room",
+        "description": "",
+        "operationId": "Insert_new_room",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/CreateRoomDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Insert room successfully"
+          },
+          "4xx": {
+            "description": "Insert room failure"
+          }
+        }
+      }
+    },
+    "/api/v1/rooms/{id}": {
+      "get": {
+        "tags": [
+          "Room"
+        ],
+        "summary": "Get one room",
+        "description": "This can only be done by the logged in.",
+        "operationId": "get_one_room",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of room that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get room successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/RoomDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get room failure"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Room"
+        ],
+        "summary": "Update an existing room",
+        "description": "Update an existing room",
+        "operationId": "update_room",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of room that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update an existent room",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoomDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update room successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Update room failure"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Room"
+        ],
+        "summary": "Delete an existing room",
+        "description": "Delete an existing room",
+        "operationId": "delete_room",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of room that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete room successfully"
+          },
+          "4xx": {
+            "description": "Delete room failure"
+          }
+        }
+      }
+    },
+
+    "/api/v1/devices": {
+      "get": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Get all devices of device",
+        "description": "This can only be done by the logged in.",
+        "operationId": "get_all_devices",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "query",
+            "description": "RoomId values that need to be considered for filter",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "631899ed43d6e8be278a1691"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get list of devices successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceDto"
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get list of devices failure"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Insert new device",
+        "description": "",
+        "operationId": "Insert_new_device",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/CreateDeviceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Insert device successfully"
+          },
+          "4xx": {
+            "description": "Insert device failure"
+          }
+        }
+      }
+    },
+    "/api/v1/devices/{id}": {
+      "get": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Get one device",
+        "description": "This can only be done by the logged in.",
+        "operationId": "get_one_device",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of device that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get device successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/DeviceDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get device failure"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Update an existing device",
+        "description": "Update an existing device",
+        "operationId": "update_device",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of device that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update an existent device",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDeviceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update device successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Update device failure"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Delete an existing device",
+        "description": "Delete an existing device",
+        "operationId": "delete_device",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of device that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete device successfully"
+          },
+          "4xx": {
+            "description": "Delete device failure"
+          }
+        }
+      }
+    },
+    "/api/v1/notifications": {
+      "get": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Get all notifications of user",
+        "description": "This can only be done by the logged in.",
+        "operationId": "get_all_notifications",
+        "responses": {
+          "200": {
+            "description": "Get list of notifications successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationDto"
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get list of notifications failure"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Insert new notification",
+        "description": "",
+        "operationId": "Insert_new_notification",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/CreateNotificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Insert notification successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Insert notification failure"
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/{id}": {
+      "get": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Get one notification",
+        "description": "This can only be done by the logged in.",
+        "operationId": "get_one_notification",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of notification that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get notification successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Get notification failure"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Update an existing notification",
+        "description": "Update an existing notification",
+        "operationId": "update_notification",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of notification that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update an existent notification",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNotificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update notification successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationDto"
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Update notification failure"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Delete an existing notification",
+        "description": "Delete an existing notification",
+        "operationId": "delete_notification",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of notification that needs to be fetched",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete notification successfully"
+          },
+          "4xx": {
+            "description": "Delete notification failure"
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin.nv@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1693"
+          },
+          "accessToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE4OTllZDQzZDZlOGJlMjc4YTE2OTMiLCJlbWFpbCI6ImtoYW5nLm52QGdtYWlsLmNvbSIsImlhdCI6MTY2MzI5NzMxOSwiZXhwIjoxNjYzNjU3MzE5fQ.5-Z9BnH-iHUzWy0NoQQm6LOa9zYOYykU-moxmsqeVrU"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzI4MDdmMGFlN2IxMWU4MDhiNDE0MDEiLCJlbWFpbCI6ImFkbWluLm52QGdtYWlsLmNvbSIsImlhdCI6MTY2MzU4NTkxMSwiZXhwIjoxNjY0NDQ5OTExfQ.kBp1OaheUsRPblOVs83-iy_lrda_Gpu6PGKr52Uyb9c"
+          },
+          "fcmToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzI4MDdmMGFlN2IxMWU4MDhiNDE0MDEiLCJlbWFpbCI6ImFkbWluLm52QGdtYWlsLmNvbSIsImlhdCI6MTY2MzU4NTkxMSwiZXhwIjoxNjY0NDQ5OTExfQ.kBp1OaheUsRPblOVs8dmMGFlN2IxMWU4MDhiNDE0M42"
+          }
+        }
+      },
+      "Register": {
+        "type": "object",
+        "required": ["email", "password", "fullName"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin.nv@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Nguyễn Văn Admin"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "0383888999"
+          },
+          "address": {
+            "type": "string",
+            "example": "Hà Nội"
+          }
+        }
+      },
+      "UpdateUser": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Nguyễn Văn Admin"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "0383888999"
+          },
+          "address": {
+            "type": "string",
+            "example": "Hà Nội"
+          }
+        }
+      },
+      "UserDtoNoPass": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          },
+          "email": {
+            "type": "string",
+            "example": "admin.nv@gmail.com"
+          },
+          "fcmToken": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Nguyễn Văn Admin"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "0383888999"
+          },
+          "address": {
+            "type": "string",
+            "example": "Hà Nội"
+          },
+          "roles": {
+            "type": "string",
+            "description": "Roles of account",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "MANAGER"
+            ],
+            "example": "USER"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzI4MDdmMGFlN2IxMWU4MDhiNDE0MDEiLCJlbWFpbCI6ImFkbWluLm52QGdtYWlsLmNvbSIsImlhdCI6MTY2MzU4NTkxMSwiZXhwIjoxNjY0NDQ5OTExfQ.kBp1OaheUsRPblOVs83-iy_lrda_Gpu6PGKr52Uyb9c"
+          }
+        }
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          },
+          "email": {
+            "type": "string",
+            "example": "admin.nv@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          },
+          "fcmToken": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Nguyễn Văn Admin"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "0383888999"
+          },
+          "address": {
+            "type": "string",
+            "example": "Hà Nội"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "use for refresh token",
+            "example": "coJH-MckTEq7tkhCtDGkyg:APA91bH0pnoIvq58x-a0wFU2sQrMpeY6XDUOzH_otuK34Qb31l0VMCv3t8FNs6XDWsDQsGNKPEMKlooRVwaC4czNOoE85zi0RSnMLkBIJTWQijXk_B317NH-kodchknseNMDGvAiGIkE"
+          },
+          "roles": {
+            "type": "string",
+            "description": "Roles of account",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "MANAGER"
+            ],
+            "example": "USER"
+          }
+        }
+      },
+      "HouseDto": {
+        "type": "object",
+        "description": "Use for get house",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "631958a364fab4f858d8dbbe"
+          },
+          "houseName": {
+            "type": "string",
+            "example": "Nhà C1"
+          },
+          "address": {
+            "type": "string",
+            "example": "Số 1000 Đại Cồ Việt"
+          },
+          "floor": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "members": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "userId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          },
+          "area": {
+            "type": "integer",
+            "format": "int32",
+            "example": 68
+          }
+        }
+      },
+      "CreateHouseDto": {
+        "type": "object",
+        "required": ["houseName", "address"],
+        "properties": {
+          "houseName": {
+            "type": "string",
+            "example": "Nhà C1"
+          },
+          "address": {
+            "type": "string",
+            "example": "Số 1000 Đại Cồ Việt"
+          },
+          "floor": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "members": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "area": {
+            "type": "integer",
+            "format": "int32",
+            "example": 68
+          }
+        }
+      },
+      "UpdateHouseDto": {
+        "type": "object",
+        "properties": {
+          "houseName": {
+            "type": "string",
+            "example": "Nhà C1"
+          },
+          "address": {
+            "type": "string",
+            "example": "Số 1000 Đại Cồ Việt"
+          },
+          "floor": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "members": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "area": {
+            "type": "integer",
+            "format": "int32",
+            "example": 68
+          }
+        }
+      },
+    
+      "RoomDto": {
+        "type": "object",
+        "description": "Use for get room",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "631958a364fab4f58d8dbded"
+          },
+          "roomName": {
+            "type": "string",
+            "example": "Phòng 101"
+          },
+          "position": {
+            "type": "string",
+            "example": "Tầng 1 phòng 101"
+          },
+          "owner": {
+            "type": "string",
+            "example": "Nguyễn Văn Admin"
+          },
+          "houseId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          },
+          "area": {
+            "type": "integer",
+            "format": "int32",
+            "example": 68
+          }
+        }
+      },
+      "CreateRoomDto": {
+        "type": "object",
+        "required": ["roomName", "houseId", "position"],
+        "properties": {
+          "roomName": {
+            "type": "string",
+            "example": "Phòng 101"
+          },
+          "position": {
+            "type": "string",
+            "example": "Tầng 1 phòng 101"
+          },
+          "owner": {
+            "type": "string",
+            "example": "Nguyễn Văn Admin"
+          },
+          "houseId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          },
+          "area": {
+            "type": "integer",
+            "format": "int32",
+            "example": 68
+          }
+        }
+      },
+      "UpdateRoomDto": {
+        "type": "object",
+        "properties": {
+          "roomName": {
+            "type": "string",
+            "example": "Phòng 101"
+          },
+          "position": {
+            "type": "string",
+            "example": "Tầng 1 phòng 101"
+          },
+          "owner": {
+            "type": "string",
+            "example": "Nguyễn Văn Admin"
+          },
+          "area": {
+            "type": "integer",
+            "format": "int32",
+            "example": 68
+          }
+        }
+      },
+
+      "DeviceDto": {
+        "type": "object",
+        "description": "Use for get device",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "631958a364fab4f58d8dbded"
+          },
+          "deviceName": {
+            "type": "string",
+            "example": "Cảm biến nhiệt độ, độ ẩm"
+          },
+          "position": {
+            "type": "string",
+            "example": "Phòng 101, cạnh cửa chính"
+          },
+          "status": {
+            "type": "string",
+            "example": "ON"
+          },
+          "deviceType": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              1,2,3
+            ],
+            "example": 1
+          },
+          "roomId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          }
+        }
+      },
+      "CreateDeviceDto": {
+        "type": "object",
+        "required": ["deviceName", "deviceType", "roomId"],
+        "properties": {
+          "deviceName": {
+            "type": "string",
+            "example": "Cảm biến nhiệt độ, độ ẩm"
+          },
+          "position": {
+            "type": "string",
+            "example": "Phòng 101, cạnh cửa chính"
+          },
+          "status": {
+            "type": "string",
+            "example": "ON"
+          },
+          "deviceType": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              1,2,3
+            ],
+            "example": 1
+          },
+          "roomId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          }
+        }
+      },
+      "UpdateDeviceDto": {
+        "type": "object",
+        "properties": {
+          "deviceName": {
+            "type": "string",
+            "example": "Cảm biến nhiệt độ, độ ẩm"
+          },
+          "position": {
+            "type": "string",
+            "example": "Phòng 101, cạnh cửa chính"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ON", "OFF"],
+            "example": "ON"
+          },
+          "roomId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          }
+        }
+      },
+
+      "NotificationDto": {
+        "type": "object",
+        "description": "Use for get notification",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "631958a364fab4f858d8dbbe"
+          },
+          "device": {
+            "type": "string",
+            "example": "Cảm biến nhiệt độ, độ ẩm"
+          },
+          "content": {
+            "type": "string",
+            "example": "Cảnh báo nguy hiểm: ..."
+          },
+          "statusSeen": {
+            "type": "string",
+            "example": "YES",
+            "enum": ["YES", "NO"]
+          },
+          "userId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          },
+          "dateTime": {
+            "type": "string",
+            "example": "Wednesday, September 14th 2022, 14:35:05"
+          }
+        }
+      },
+      "CreateNotificationDto": {
+        "type": "object",
+        "required": ["device", "content", "userId"],
+        "properties": {
+          "device": {
+            "type": "string",
+            "example": "Cảm biến nhiệt độ, độ ẩm"
+          },
+          "content": {
+            "type": "string",
+            "example": "Cảnh báo nguy hiểm: ..."
+          },
+          "userId": {
+            "type": "string",
+            "example": "631899ed43d6e8be278a1691"
+          }
+        }
+      },
+      "UpdateNotificationDto": {
+        "type": "object",
+        "properties": {
+          "device": {
+            "type": "string",
+            "example": "Cảm biến nhiệt độ, độ ẩm"
+          },
+          "content": {
+            "type": "string",
+            "example": "Cảnh báo nguy hiểm: ..."
+          },
+          "statusSeen": {
+            "type": "string",
+            "example": "YES",
+            "enum": ["YES", "NO"]
+          }
+        }
+      }
+    },
+    
+    "requestBodies": {
+    },
+
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+    "bearerAuth": []
+    }
+  ]
+}

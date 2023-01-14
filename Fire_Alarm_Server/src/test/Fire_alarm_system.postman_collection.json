@@ -1,0 +1,1248 @@
+{
+	"info": {
+		"_postman_id": "3c9d8dee-3342-466f-ba3e-bc54df3faa2f",
+		"name": "Fire alarm system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17067498"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test.nv@gmail.com\",\r\n    \"password\": \"{{password}}\",\r\n    \"fullName\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/user/register",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json(); \r",
+									"\r",
+									"// set value accessToken to collection\r",
+									"pm.collectionVariables.set(\"accessToken\", res.data.accessToken);\r",
+									"pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);\r",
+									"pm.collectionVariables.set(\"userId\", res.data.userId);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test.nv@gmail.com\",\r\n    \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/user/login",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json(); \r",
+									"\r",
+									"// set value accessToken to collection\r",
+									"pm.collectionVariables.set(\"accessToken\", res.data.accessToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/refresh-token",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/auth/user/logout",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "House",
+			"item": [
+				{
+					"name": "/houses",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// const url = pm.collectionVariables.get(\"domain\");\r",
+									"// const options = {\r",
+									"//   url:  `${url}/api/v1/houses`, \r",
+									"//   method: 'POST',\r",
+									"//   header: {\r",
+									"//     'Accept': '*/*',\r",
+									"//     'Content-Type': 'application/json',\r",
+									"//     'Authorization': \"Bearer \" + pm.collectionVariables.get(\"accessToken\"),\r",
+									"//   },\r",
+									"//   body: {\r",
+									"//     mode: 'raw',\r",
+									"//     raw: JSON.stringify({\r",
+									"//     \"houseName\": \"Nhà A1\",\r",
+									"//     \"address\": \"HN\",\r",
+									"//     \"floor\": 3,\r",
+									"//     \"members\": 4,\r",
+									"//     \"area\": 1\r",
+									"//     })\r",
+									"//   }\r",
+									"// };\r",
+									"\r",
+									"// pm.sendRequest(options, function (err, res) {\r",
+									"//   if(err) console.error(err);\r",
+									"//   console.log(res.json());\r",
+									"// });"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/houses",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"houses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/houses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const res = pm.response.json(); \r",
+									"\r",
+									"pm.collectionVariables.set(\"houseId\", res?.data?._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"houseName\": \"Nhà C1\",\r\n    \"address\": \"Hai Bà Trưng, Hà Nội\",\r\n    \"floor\": 3,\r\n    \"members\": 4,\r\n    \"area\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/houses",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"houses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/houses/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/houses/{{houseId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"houses",
+								"{{houseId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/houses/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"houseName\": \"Nhà K\",\r\n    \"address\": \"Số 888 Lê Duẩn\",\r\n    \"floor\": 3,\r\n    \"members\": 4,\r\n    \"area\": 48\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/houses/{{houseId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"houses",
+								"{{houseId}}"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "6320274edf8582eb57205b63",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/houses/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const url = pm.collectionVariables.get(\"domain\");\r",
+									"const options = {\r",
+									"  url:  `${url}/api/v1/houses`, \r",
+									"  method: 'POST',\r",
+									"  header: {\r",
+									"    'Accept': '*/*',\r",
+									"    'Content-Type': 'application/json',\r",
+									"    'Authorization': \"Bearer \" + pm.collectionVariables.get(\"accessToken\"),\r",
+									"  },\r",
+									"  body: {\r",
+									"    mode: 'raw',\r",
+									"    raw: JSON.stringify({\r",
+									"    \"houseName\": \"Nhà A1\",\r",
+									"    \"address\": \"HN\",\r",
+									"    \"floor\": 3,\r",
+									"    \"members\": 4,\r",
+									"    \"area\": 1\r",
+									"    })\r",
+									"  }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(options, function (err, res) {\r",
+									"  if(err) {console.error(err); }\r",
+									"  let response = res.json();\r",
+									"  let houseId = response.data._id;\r",
+									"  pm.collectionVariables.set(\"houseId\", houseId);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/houses/{{houseId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"houses",
+								"{{houseId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Room",
+			"item": [
+				{
+					"name": "/rooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/rooms?houseId={{houseId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"rooms"
+							],
+							"query": [
+								{
+									"key": "houseId",
+									"value": "{{houseId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/rooms",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const res = pm.response.json(); \r",
+									"\r",
+									"pm.collectionVariables.set(\"roomId\", res?.data?._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roomName\": \"P.101\",\r\n    \"owner\": \"Nguyễn Văn A\",\r\n    \"houseId\": \"{{houseId}}\",\r\n    \"area\": 25,\r\n    \"position\": \"Tầng 1, phòng 101\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/rooms",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"rooms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/rooms/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/rooms/{{roomId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								"{{roomId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/rooms/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roomName\": \"P.101\",\r\n    \"houseId\": \"{{houseId}}\",\r\n    \"area\": 25,\r\n    \"owner\": \"Nguyễn Văn C\",\r\n    \"position\": \"Tầng 1, phòng 101\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/rooms/{{roomId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								"{{roomId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/rooms/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const url = pm.collectionVariables.get(\"domain\");\r",
+									"const houseId = pm.collectionVariables.get(\"houseId\");\r",
+									"const options = {\r",
+									"  url:  `${url}/api/v1/rooms`, \r",
+									"  method: 'POST',\r",
+									"  header: {\r",
+									"    'Accept': '*/*',\r",
+									"    'Content-Type': 'application/json',\r",
+									"    'Authorization': \"Bearer \" + pm.collectionVariables.get(\"accessToken\"),\r",
+									"  },\r",
+									"  body: {\r",
+									"    mode: 'raw',\r",
+									"    raw: JSON.stringify({\r",
+									"    \"roomName\": \"P.203\",\r",
+									"    \"owner\": \"Nguyễn Thị T\",\r",
+									"    \"houseId\": `${houseId}`,\r",
+									"    \"area\": 24,\r",
+									"    \"position\": \"Tầng 2, phòng 203\"\r",
+									"    })\r",
+									"  }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(options, function (err, res) {\r",
+									"  if(err) {console.error(err); }\r",
+									"  let response = res.json();\r",
+									"  let roomId = response.data._id;\r",
+									"  pm.collectionVariables.set(\"roomId\", roomId);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/rooms/{{roomId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								"{{roomId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Device",
+			"item": [
+				{
+					"name": "/devices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/devices?roomId={{roomId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices"
+							],
+							"query": [
+								{
+									"key": "roomId",
+									"value": "{{roomId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/devices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const res = pm.response.json(); \r",
+									"\r",
+									"pm.collectionVariables.set(\"deviceId\", res?.data?._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"deviceName\": \"Cảm biến nhiệt độ\",\r\n    \"roomId\": \"{{roomId}}\",\r\n    \"status\": \"ON\",\r\n    \"position\": \"Trên trần nhà\",\r\n    \"deviceType\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/devices",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/devices/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/devices/{{deviceId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								"{{deviceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/devices/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"deviceName\": \"DHT 11 - Cam bien nhiet do, do am 1\",\r\n    \"status\": \"ON\",\r\n    \"position\": \"canh cua so\",\r\n    \"deviceType\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/devices/{{deviceId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								"{{deviceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/devices/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const url = pm.collectionVariables.get(\"domain\");\r",
+									"const roomId = pm.collectionVariables.get(\"roomId\");\r",
+									"const options = {\r",
+									"  url:  `${url}/api/v1/devices`, \r",
+									"  method: 'POST',\r",
+									"  header: {\r",
+									"    'Accept': '*/*',\r",
+									"    'Content-Type': 'application/json',\r",
+									"    'Authorization': \"Bearer \" + pm.collectionVariables.get(\"accessToken\"),\r",
+									"  },\r",
+									"  body: {\r",
+									"    mode: 'raw',\r",
+									"    raw: JSON.stringify({\r",
+									"    \"deviceName\": \"Cảm biến khói\",\r",
+									"    \"roomId\": `${roomId}`,\r",
+									"    \"status\": \"ON\",\r",
+									"    \"position\": \"Trên trần nhà\",\r",
+									"    \"deviceType\": 2\r",
+									"    })\r",
+									"  }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(options, function (err, res) {\r",
+									"  if(err) {console.error(err); }\r",
+									"  let response = res.json();\r",
+									"  let deviceId = response.data._id;\r",
+									"  pm.collectionVariables.set(\"deviceId\", deviceId);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/devices/{{deviceId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								"{{deviceId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notification",
+			"item": [
+				{
+					"name": "/notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/notifications",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/notifications",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const res = pm.response.json(); \r",
+									"\r",
+									"pm.collectionVariables.set(\"notificationId\", res?.data?._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"device\": \"Cảm biến khí ga 1\",\r\n    \"statusSeen\": \"NO\",\r\n    \"content\": \"Cảnh báo khí ga tại tầng 2 phòng 202\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/notifications",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/notifications/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/notifications/{{notificationId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"{{notificationId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/notifications/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\": \"nhiệt độ đã hạ thấp\",\r\n    \"statusSeen\": \"YES\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/notifications/{{notificationId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"{{notificationId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/notifications/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/notifications/{{notificationId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"{{notificationId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "/users/info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/users/info",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/change-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"{{password}}\",\r\n    \"newPassword\": \"{{newPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/users/change-password",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/tokenFCM",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fcmToken\": \"token FCM\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/users/tokenFCM",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"tokenFCM"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/info",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"test\",\r\n    \"address\": \"Đống Đa, Hà Nội\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/users/info",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "return oldPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"{{newPassword}}\",\r\n    \"newPassword\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/v1/users/change-password",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Refresh database",
+			"item": [
+				{
+					"name": "/devices/:id refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/devices/{{deviceId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								"{{deviceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/rooms/:id refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/rooms/{{roomId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								"{{roomId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/houses/:id refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/v1/houses/{{houseId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"houses",
+								"{{houseId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "domain",
+			"value": "http://localhost:5000",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "domain",
+			"value": "https://fire-alarm12.herokuapp.com",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "123456",
+			"type": "string"
+		},
+		{
+			"key": "newPassword",
+			"value": "1234567",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "fcmToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "houseId",
+			"value": ""
+		},
+		{
+			"key": "roomId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "deviceId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "notificationId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

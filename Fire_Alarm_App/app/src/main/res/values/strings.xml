@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Fire Alarm System</string>
+    <string name="Toast_register_success">Register success!</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="nav_house">House</string>
+    <string name="nav_manage_device">Manage Device</string>
+    <string name="nav_notification">Notification</string>
+    <string name="nav_account">Account</string>
+    <string name="nav_my_profile">My Profile</string>
+    <string name="nav_change_password">Change Password</string>
+    <string name="nav_sign_out">Sign Out</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="msg_change_password_success">Change password successfully!</string>
+    <string name="msg_change_password_fail">Old password is wrong</string>
+    <string name="warning_enter_all_fields">You must enter all the fields!</string>
+    <string name="warning_email_invalid">Email invalid!</string>
+    <string name="warning_confirm_pass_wrong">Confirm password wrong!</string>
+    <string name="warning_length_pass">Password must be at least 6 characters!</string>
+    <string name="btn_edit_string">Update</string>
+    <string name="Title_ActionBar_House_Fragment">Manage House</string>
+    <string name="Title_ActionBar_Notification_Fragment">Manage Notification</string>
+    <string name="Title_ActionBar_Profile_Fragment">Manage Profile</string>
+    <string name="Title_ActionBar_ChangePass_Fragment">Change password</string>
+
+    <string name="sign_in_btn"><u>Sign In</u></string>
+    <string name="sign_up_btn"><u>Sign Up</u></string>
+
+    <!-- spinner for device type -->
+    <string-array name="device_type_string">
+        <item>Flame sensor</item>
+        <item>MQ2 sensor</item>
+        <item>DHT11 sensor</item>
+    </string-array>
+
+    <string-array name="device_type_value">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+</resources>
