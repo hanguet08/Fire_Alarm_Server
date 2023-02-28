@@ -31,6 +31,10 @@ int humi_and_temp_type = 3;
 #define MQ2_PIN_ANALOG 4
 #define MQ2_PIN_DIGITAL 15
 #define MQ2_PIN_WARNING 18
+#define DHTPIN 5// đọc dữ liệu cảm biến từ DHTT11 ở chân 5
+
+// DHT type
+#define DHTTYPE  DHT11
 
 int previous_status_flame = 1;
 int previous_status_mq2 = 1;
@@ -46,6 +50,7 @@ StaticJsonDocument<200> mess_publish;
 // Để sử dụng thư viện PubSubClient ta cần khởi tạo một đối tượng tên là là client.
 WiFiClient espClient;
 PubSubClient client(espClient);
+DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
   Serial.begin(115200);  // Khởi tạo kết nối Serial để truyền dữ liệu đến máy tính
@@ -110,6 +115,7 @@ void Publish_Flame(int value) {
     mess_publish["deviceId"] = flame_id;
     mess_publish["deviceType"] = flame_type;
     mess_publish["flameValue"] = value;
+    // tạo đối tượng json
     serializeJson(mess_publish, buffer_flame);
     client.publish(MQTT_TOPIC_PUB_FAM, buffer_flame);
     delay(100);
@@ -123,6 +129,44 @@ void Publish_Mq2(int value) {
     serializeJson(mess_publish, buffer_mq2);
     client.publish(MQTT_TOPIC_PUB_FAM, buffer_mq2);
     delay(100);
+}
+
+void Get_Value_Dhtt() {
+   float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  float f = dht.readTemperature(true);
+
+  if (isnan(h) || isnan(t) || isnan(f)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return;
+  } else {
+    float hif = dht.computeHeatIndex(f, h);
+    float hic = dht.computeHeatIndex(t, h, false);
+
+    Serial.print(F("Humidity: "));
+    Serial.print(h);
+    Serial.print(F("%  Temperature: "));
+    Serial.print(t);
+    Serial.print(F("°C "));
+    Serial.print(f);
+    Serial.print(F("°F  Heat index: "));
+    Serial.print(hic);
+    Serial.print(F("°C "));
+    Serial.print(hif);
+    Serial.println(F("°F"));
+
+    String temperature = String(t);
+    String humidity = String(h);
+
+      char buffer_dhtt[256];
+    mess_publish["deviceId"] = mq2_id;
+    mess_publish["deviceType"] = mq2_type;
+    mess_publish["temperature"] = temperature;
+      mess_publish["humidity"] = humidity;
+    serializeJson(mess_publish, buffer_dhtt);
+    client.publish(MQTT_TOPIC_PUB_FAM, buffer_dhtt);
+    delay(100);
+  }
 }
 
 void loop() {
@@ -149,11 +193,16 @@ void loop() {
    Serial.print("flame: ");
    Serial.println(flame_digital_value);
    Serial.println("");
-   
+
+    // kiểm tra xem đã đến lúc đèn LED nhấp nháy chưa; nghĩa là, nếu 
+  // chênh lệch giữa thời gian hiện tại và lần trước bạn nhấp nháy 
+  // đèn LED lớn hơn khoảng thời gian bạn muốn 
+  // nhấp nháy đèn LED.  
    if(flame_digital_value == LOW) {
       if(previous_status_flame == 1 || currentMillis - previousMillis >= interval){
-        digitalWrite(FLAME_PIN_WARNING, HIGH); 
+        digitalWrite(FLAME_PIN_WARNING, HIGH); // cập nhật led thực tế
         Publish_Flame(flame_digital_value);
+        // lưu lại lần cuối cùng nhấp nháy đền led
         previousMillis = currentMillis;
         previous_status_flame = 0;
       } else previousMillis = currentMillis;
@@ -187,5 +236,12 @@ void loop() {
       Publish_Mq2(gas_digital_value);
       previousMillis = currentMillis;
    }
+
+   // Get temperatue, humidity, gas value every 10 seconds
+  long now = millis();
+  if (now - lastMsg > 10000) {
+    lastMsg = now;
+  Get_Value_Dhtt()
+  }
    delay(1000);
 }
