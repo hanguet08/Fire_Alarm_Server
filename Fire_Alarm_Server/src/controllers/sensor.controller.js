@@ -1,5 +1,6 @@
 const apiResponse = require("../utils/apiResponse");
 const APIStatus = require("../constants/APIStatus");
+const { spawn } = require("child_process");
 const {
   getSensorDb,
   insertDataSensorDb,
@@ -46,8 +47,29 @@ const getTempAndHumi = (sensors) => {
   };
 };
 
+const getTemperatureTrain = (req, res) => {
+  var data = [
+    22.97, 22.47, 22.89, 22.83, 22.97, 22.47, 22.89, 22.83, 22.69, 22.54, 22.43,
+    22.19, 22.39, 23.49, 24.27, 22.97, 22.47, 22.89, 22.83, 22.69, 22.54, 22.43,
+    22.19, 22.39,
+  ];
+  var modelTraning = spawn("python3", [
+    "/home/ubuntu/Downloads/Fire_Alarm_System-master/Model_Train/models/test.py",
+  ]);
+  modelTraning.stdout.on("data", function (data) {
+    console.log("has data");
+    console.log(data.toString());
+
+    return res
+      .status(200)
+      .json(apiResponse({ status: APIStatus.SUCCESS, data: data.toString() }));
+    // res.send(data.toString());
+  });
+};
+
 module.exports = {
   getSensor,
   getDataSensor,
   getAllSensorOfDevice,
+  getTemperatureTrain,
 };
