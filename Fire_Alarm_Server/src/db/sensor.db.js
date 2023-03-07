@@ -23,7 +23,7 @@ const insertDataSensorDb = async (query) => {
 // get all sensor in device
 const getAllSensorOfDeviceDb = async (query) => {
   try {
-    const sensors = await Sensor.find(query);
+    const sensors = await Sensor.find(query).limit(24);
     return sensors;
   } catch (error) {
     console.error("getAllSensorOfDevice: " + error);
@@ -33,5 +33,5 @@ const getAllSensorOfDeviceDb = async (query) => {
 module.exports = {
   getSensorDb,
   insertDataSensorDb,
-  getAllSensorOfDeviceDb
+  getAllSensorOfDeviceDb,
 };

@@ -47,7 +47,11 @@ const getTempAndHumi = (sensors) => {
   };
 };
 
-const getTemperatureTrain = (req, res) => {
+const getTemperatureTrain = async (req, res, next) => {
+  const deviceId = req.query.deviceId;
+  const sensors = await getAllSensorOfDeviceDb({ deviceId });
+  const inputTrain = getTempAndHumi(sensors);
+  const inputTemperature = inputTrain.temperature;
   var data = [
     22.97, 22.47, 22.89, 22.83, 22.97, 22.47, 22.89, 22.83, 22.69, 22.54, 22.43,
     22.19, 22.39, 23.49, 24.27, 22.97, 22.47, 22.89, 22.83, 22.69, 22.54, 22.43,
@@ -55,6 +59,7 @@ const getTemperatureTrain = (req, res) => {
   ];
   var modelTraning = spawn("python3", [
     "/home/ubuntu/Downloads/Fire_Alarm_System-master/Model_Train/models/test.py",
+    inputTemperature.toString(),
   ]);
   modelTraning.stdout.on("data", function (data) {
     console.log("has data");

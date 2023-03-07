@@ -29,9 +29,9 @@ router.get(
 //   asyncWrap(getDataSensor)
 // );
 router.get(
-  "/temperature",
-  // verifyToken,
-  // verifyRoles(ROLES_LIST.User),
+  "/temperature/",
+  verifyToken,
+  verifyRoles(ROLES_LIST.User),
   asyncWrap(getTemperatureTrain)
 );
 
