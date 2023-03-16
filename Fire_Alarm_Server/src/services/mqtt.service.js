@@ -27,8 +27,8 @@ var mqttClient = mqtt.connect(connectUrl, {
   clientId,
   clean: true,
   connectTimeout: 4000,
-  username: "fire_alarm_system", // tự cấu hình
-  password: "123456", // tự cấu hình
+  username: "fire_alarm_system1", // tự cấu hình
+  password: "1234567", // tự cấu hình
   reconnectPeriod: 1000,
 });
 
@@ -41,6 +41,7 @@ mqttClient.once("connect", function () {
   // listener message receive
   mqttClient.on("message", async (topic, msg) => {
     try {
+      console.log(msg);
       // message receive from MQTT
       const message = JSON.parse(msg.toString()),
         { deviceId, deviceType } = message,

@@ -2,10 +2,11 @@
  // Thư viện dùng để connect, publish/subscribe mqtt
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
+#include "DHT.h"
 
 // setup wifi
-const char* ssid = "YOUR_USERNAME_WIFI"; // tên của mạng wifi bạn muốn kết nối đến
-const char* password =  "YOUR_PASSWORD_WIFI" // mật khẩu của mạng wifi
+const char* ssid = "HUAWEI nova 3i"; // tên của mạng wifi bạn muốn kết nối đến
+const char* password =  "13456789"; // mật khẩu của mạng wifi
 
 // hardcode
 String flame_id = "63241e55f11f2f2d50b55964";   // "FLAME_ID"
@@ -17,11 +18,11 @@ int mq2_type = 2;
 int humi_and_temp_type = 3;
 
 // broker MQTT
-// khai báo một giá trị không đổi
+#define DHTTYPE  DHT11
 #define MQTT_SERVER "broker.hivemq.com"
 #define MQTT_PORT 1883
-#define MQTT_USER "YOUR_MQTT_USERNAME"
-#define MQTT_PASSWORD "YOUR_MQTT_PASSWORD"
+#define MQTT_USER "fire_alarm_system1"
+#define MQTT_PASSWORD "1234567"
 #define MQTT_TOPIC_PUB_HAT "smart_home_humidity_and_temperature"
 #define MQTT_TOPIC_PUB_FAM "smart_home_flame_and_mq2"
 
@@ -31,10 +32,7 @@ int humi_and_temp_type = 3;
 #define MQ2_PIN_ANALOG 4
 #define MQ2_PIN_DIGITAL 15
 #define MQ2_PIN_WARNING 18
-#define DHTPIN 5// đọc dữ liệu cảm biến từ DHTT11 ở chân 5
-
-// DHT type
-#define DHTTYPE  DHT11
+#define DHTPIN 19
 
 int previous_status_flame = 1;
 int previous_status_mq2 = 1;
@@ -43,18 +41,20 @@ int gas_digital_value = 1;
 int flame_digital_value = 1;
 int flame_analog_value = 4095;
 unsigned long interval = 60000;   // 60s 
+unsigned long interval_DHT = 5000;   // 5s
 unsigned long interval_warning = 10000;
 unsigned long previousMillis;
 // cấp phát bộ nhớ tại chỗ
 StaticJsonDocument<200> mess_publish;
+StaticJsonDocument<200> mess_subscribe;
 // Để sử dụng thư viện PubSubClient ta cần khởi tạo một đối tượng tên là là client.
 WiFiClient espClient;
 PubSubClient client(espClient);
+
 DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
   Serial.begin(115200);  // Khởi tạo kết nối Serial để truyền dữ liệu đến máy tính
-  // set up wifi
   setup_wifi(); // gọi hàm setup wifi
   pinMode(FLAME_PIN_ANALOG, INPUT); // thiết lập chân số 13 là chân nhận tín hiệu
   pinMode(MQ2_PIN_ANALOG, INPUT); 
@@ -67,7 +67,6 @@ void setup() {
   //set up MQTT
   client.setServer(MQTT_SERVER, MQTT_PORT);
   // client.setCallback(callback);   // sử dụng cho nhận message MQTT
-
   delay(100);
 }
 
@@ -131,41 +130,32 @@ void Publish_Mq2(int value) {
     delay(100);
 }
 
-void Get_Value_Dhtt() {
-   float h = dht.readHumidity();
-  float t = dht.readTemperature();
-  float f = dht.readTemperature(true);
-
-  if (isnan(h) || isnan(t) || isnan(f)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
-    return;
-  } else {
-    float hif = dht.computeHeatIndex(f, h);
-    float hic = dht.computeHeatIndex(t, h, false);
-
-    Serial.print(F("Humidity: "));
-    Serial.print(h);
-    Serial.print(F("%  Temperature: "));
-    Serial.print(t);
-    Serial.print(F("°C "));
-    Serial.print(f);
-    Serial.print(F("°F  Heat index: "));
-    Serial.print(hic);
-    Serial.print(F("°C "));
-    Serial.print(hif);
-    Serial.println(F("°F"));
-
-    String temperature = String(t);
-    String humidity = String(h);
-
-      char buffer_dhtt[256];
-    mess_publish["deviceId"] = mq2_id;
-    mess_publish["deviceType"] = mq2_type;
-    mess_publish["temperature"] = temperature;
-      mess_publish["humidity"] = humidity;
-    serializeJson(mess_publish, buffer_dhtt);
-    client.publish(MQTT_TOPIC_PUB_FAM, buffer_dhtt);
-    delay(100);
+// Publish nhiệt độ, độ ẩm
+void Publish_DHT() {
+  unsigned long currentMillis = millis(); 
+  if (currentMillis - previousMillis >= interval_DHT) {
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    // Check if any reads failed and exit early (to try again).
+    if (isnan(h) || isnan(t)) {
+      delay(500);
+      return;
+    } else {
+        char buffer_DHT[256];
+        mess_publish["humidityAir"] = round(h);
+        mess_publish["temperature"] = round(t);
+        
+        mess_publish["deviceId"] = humi_and_temp_id;
+        mess_publish["deviceType"] = humi_and_temp_type;
+        Serial.print("humidityAir: ");
+        Serial.println(h);
+        Serial.print("temperature: ");
+        Serial.println(t);
+        serializeJson(mess_publish, buffer_DHT);
+        client.publish(MQTT_TOPIC_PUB_HAT, buffer_DHT);
+        delay(100);
+        previousMillis = currentMillis;
+    }
   }
 }
 
@@ -181,8 +171,6 @@ void loop() {
    client.loop();
    
    // liên tục đọc giá trị cảm biến
-   delay(100);
-
    // gas_analog_value = analogRead(MQ2_PIN_ANALOG);
    gas_digital_value = digitalRead(MQ2_PIN_DIGITAL);
    flame_digital_value = digitalRead(FLAME_PIN_DIGITAL);
@@ -194,7 +182,7 @@ void loop() {
    Serial.println(flame_digital_value);
    Serial.println("");
 
-    // kiểm tra xem đã đến lúc đèn LED nhấp nháy chưa; nghĩa là, nếu 
+  // kiểm tra xem đã đến lúc đèn LED nhấp nháy chưa
   // chênh lệch giữa thời gian hiện tại và lần trước bạn nhấp nháy 
   // đèn LED lớn hơn khoảng thời gian bạn muốn 
   // nhấp nháy đèn LED.  
@@ -237,11 +225,6 @@ void loop() {
       previousMillis = currentMillis;
    }
 
-   // Get temperatue, humidity, gas value every 10 seconds
-  long now = millis();
-  if (now - lastMsg > 10000) {
-    lastMsg = now;
-  Get_Value_Dhtt()
-  }
-   delay(1000);
+Publish_DHT();
+delay(2000);
 }
