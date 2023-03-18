@@ -4,6 +4,9 @@ const hashPassword = require("../utils/hashPassword");
 const apiResponse = require("../utils/apiResponse");
 const console = require("../utils/chalk");
 const {
+  sendMessageFCM,
+} = require("../services/firebase.cloud.message.service");
+const {
   getUserDb,
   editUserDb,
   changePasswordDb,
@@ -115,9 +118,20 @@ const saveToken = async (req, res) => {
   return next(new Error("Server error!"));
 };
 
+const postTokenFcm = async (req, res) => {
+  var messageFCM = {
+    title: "CẢNH BÁO NGUY HIỂM",
+    body: "Phát hiện lửa tại P101",
+  };
+  const fcmToken =
+    "fmFrCP4USSCeRPi-Ul4AgG:APA91bGxK4xnQtyldoYmtp4Bxq0VNm8XjK2Y2xrqRuDjRjCnmN-6iaXxgNOKRrueaQXZWe6Ihl3CirBfsiCoxI_2eLtdGLGrL5z_LLUmxt98NHAcT6IgDKeizpwJqD_bxyoqGbxeFtUI";
+  sendMessageFCM(fcmToken, messageFCM);
+};
+
 module.exports = {
   getInfo,
   updateInfo,
   changePassword,
   saveToken,
+  postTokenFcm,
 };

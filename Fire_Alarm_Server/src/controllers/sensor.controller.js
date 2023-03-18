@@ -65,9 +65,12 @@ const getTemperatureTrain = async (req, res, next) => {
     console.log("has data");
     console.log(data.toString());
 
-    return res
-      .status(200)
-      .json(apiResponse({ status: APIStatus.SUCCESS, data: data.toString() }));
+    return res.status(200).json(
+      apiResponse({
+        status: APIStatus.SUCCESS,
+        data: data.toString(),
+      })
+    );
     // res.send(data.toString());
   });
 };

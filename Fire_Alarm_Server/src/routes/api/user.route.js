@@ -13,6 +13,7 @@ const {
   changePassword,
   updateInfo,
   saveToken,
+  postTokenFcm,
 } = require("../../controllers/user.controller");
 
 router.get(
@@ -43,4 +44,10 @@ router.post(
   asyncWrap(saveToken)
 );
 
+router.post(
+  "/sendToAll",
+  verifyToken,
+  verifyRoles(ROLES_LIST.User),
+  asyncWrap(postTokenFcm)
+);
 module.exports = router;
