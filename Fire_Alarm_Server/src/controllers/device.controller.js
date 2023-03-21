@@ -7,6 +7,7 @@ const {
   createDeviceDb,
   editDeviceDb,
   deleteDeviceDb,
+  controlDeviceDb,
 } = require("../db/device.db");
 const { getRoomDb } = require("../db/room.db");
 const { getHouseDb } = require("../db/house.db");
@@ -183,6 +184,53 @@ const checkDeviceOfUser = async (deviceId, userId) => {
   }
 };
 
+// control device
+const controlDevice = async (req, res, next) => {
+  const _id = req.params.id,
+    userId = req.user._id;
+
+  // check device exist
+  const isDeviceExist = await checkDeviceOfUser(_id, userId);
+  if (!isDeviceExist)
+    return res.status(404).json(
+      apiResponse({
+        status: APIStatus.FAIL,
+        msg: "You don't have this device",
+      })
+    );
+
+  console.log("control device:", req.body);
+  // edit status device
+  let device = await controlDeviceDb({ ...req.body, _id });
+  if (device) {
+    let message;
+    if (device.status == "ON") {
+      message = "Turn on device";
+    } else {
+      message = "Turn off device";
+    }
+    // const messageControl = {
+    //   deviceId: device._id,
+    //   status: device.status,
+    // };
+    // publish to mqtt
+    // mqttClient.publish(
+    //   smart_home_control_device,
+    //   JSON.stringify(messageControl)
+    // );
+    return res.status(200).json(
+      apiResponse({
+        status: APIStatus.SUCCESS,
+        msg: message,
+        data: device,
+      })
+    );
+  }
+
+  console.error("Error when controlDevice");
+  return next(new Error("Server error!"));
+};
+
 module.exports = {
   getAllDevicesInRoom,
   getDevice,
@@ -190,4 +238,5 @@ module.exports = {
   editDevice,
   deleteDevice,
   checkDeviceOfUser,
+  controlDevice,
 };

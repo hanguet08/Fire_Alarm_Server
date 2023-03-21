@@ -41,7 +41,6 @@ mqttClient.once("connect", function () {
   // listener message receive
   mqttClient.on("message", async (topic, msg) => {
     try {
-      console.log(msg);
       // message receive from MQTT
       const message = JSON.parse(msg.toString()),
         { deviceId, deviceType } = message,
@@ -55,13 +54,12 @@ mqttClient.once("connect", function () {
         userId = house.userId,
         user = await getUserDb({ _id: userId }),
         fcmToken = user.fcmToken;
-
+      console.log(message);
       if (statusDevice == DeviceStatus.ON) {
         if (deviceType == 1) {
           // flame sensor
           const { flameValue } = message;
           if (flameValue == 0) {
-            console.log(message);
             // save notification to db and notify to FCM
             let content = `Phát hiện lửa tại ${room.position} (${room.roomName}), ${house.houseName}`;
             messageFCM.body = content;
@@ -78,10 +76,10 @@ mqttClient.once("connect", function () {
           // MQ2
           const { MQ2Value } = message;
           if (MQ2Value == 0) {
-            console.log(message);
             // save notification to db and notify to FCM
             let content = `Phát hiện khí ga tại ${room.position} (${room.roomName}), ${house.houseName}`;
             messageFCM.body = content;
+            console.log(messageFCM);
             sendMessageFCM(fcmToken, messageFCM);
             createNotificationDb({
               device: device.deviceName,
@@ -115,9 +113,3 @@ mqttClient.on("error", function (error) {
 
 module.exports = mqttClient;
 
-// Format data package :
-// const data = {
-//   deviceId,
-//   deviceType,
-//   value,
-// };

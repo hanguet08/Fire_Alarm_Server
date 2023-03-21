@@ -33,11 +33,12 @@ const createDeviceDb = async (query) => {
 // Edit device
 const editDeviceDb = async (query) => {
   try {
-    const { deviceName, position, status, deviceForEdit } = query;
+    const { deviceName, position, status, deviceForEdit, deviceType } = query;
 
     deviceForEdit.position = position;
     deviceForEdit.deviceName = deviceName;
     deviceForEdit.status = status;
+    deviceForEdit.deviceType = deviceType;
 
     const rs = await deviceForEdit.save();
     return rs;
@@ -56,10 +57,24 @@ const deleteDeviceDb = async (query) => {
   }
 };
 
+// Control one device
+const controlDeviceDb = async (query) => {
+  try {
+    const { status, _id } = query,
+      device = await getDeviceDb({ _id });
+    device.status = status;
+    const rs = await device.save();
+    return rs;
+  } catch (error) {
+    console.error("controlDeviceDb: " + error);
+  }
+};
+
 module.exports = {
   getAllDeviceInRoomDb,
   getDeviceDb,
   createDeviceDb,
   deleteDeviceDb,
   editDeviceDb,
+  controlDeviceDb
 };

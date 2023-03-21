@@ -124,7 +124,7 @@ const postTokenFcm = async (req, res) => {
     body: "Phát hiện lửa tại P101",
   };
   const fcmToken =
-    "fmFrCP4USSCeRPi-Ul4AgG:APA91bGxK4xnQtyldoYmtp4Bxq0VNm8XjK2Y2xrqRuDjRjCnmN-6iaXxgNOKRrueaQXZWe6Ihl3CirBfsiCoxI_2eLtdGLGrL5z_LLUmxt98NHAcT6IgDKeizpwJqD_bxyoqGbxeFtUI";
+    "f-fP9ae1QNmsxuL90beVlJ:APA91bHPQRW2jUAeaV3FCtdtvXlUvGqzRjHfncLqyuFpCBkaLs2FIYgh0QtBek616vPVmGTlUC7rm5TNyDv3mjEmACtkQnFTqqPK2v7G23cOTEtTnb4DkBzzkyqVQLhsWqjvcCQ70n2W";
   sendMessageFCM(fcmToken, messageFCM);
 };
 

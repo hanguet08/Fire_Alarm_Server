@@ -12,6 +12,7 @@ const {
   createDevice,
   deleteDevice,
   editDevice,
+  controlDevice
 } = require("../../controllers/device.controller");
 const { verifyRoles } = require("../../middlewares/authorize.middleware");
 const ROLES_LIST = require("../../constants/roles.list");
@@ -48,6 +49,13 @@ router.delete(
   verifyToken,
   verifyRoles(ROLES_LIST.User),
   asyncWrap(deleteDevice)
+);
+
+router.post(
+  "/:id",
+  verifyToken,
+  verifyRoles(ROLES_LIST.User),
+  asyncWrap(controlDevice)
 );
 
 module.exports = router;
