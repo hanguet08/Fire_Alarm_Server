@@ -5,13 +5,13 @@
 #include "DHT.h"
 
 // setup wifi
-const char* ssid = "HUAWEI nova 3i"; // tên của mạng wifi bạn muốn kết nối đến
-const char* password =  "13456789"; // mật khẩu của mạng wifi
+const char* ssid = "HangNguyen"; // tên của mạng wifi bạn muốn kết nối đến
+const char* password =  "123456789"; // mật khẩu của mạng wifi
 
 // hardcode
-String flame_id = "63241e55f11f2f2d50b55964";   // "FLAME_ID"
-String mq2_id = "63240c72f11f2f2d50b558fb";	// "MQ2_ID"
-String humi_and_temp_id = "6324120df11f2f2d50b55936";	// "HUMI_AND_TEMP_ID"
+String flame_id = "6415cd65721d6866a1bdd44d";   // "FLAME_ID"
+String mq2_id = "6413483dedc53875fb617462";	// "MQ2_ID"
+String humi_and_temp_id = "6404abecf4d81e7a427ff726";	// "HUMI_AND_TEMP_ID"
 
 int flame_type = 1;
 int mq2_type = 2;
@@ -172,7 +172,8 @@ void loop() {
    
    // liên tục đọc giá trị cảm biến
    // gas_analog_value = analogRead(MQ2_PIN_ANALOG);
-   gas_digital_value = digitalRead(MQ2_PIN_DIGITAL);
+   // gas_digital_value = digitalRead(MQ2_PIN_DIGITAL);
+   gas_digital_value = 1;
    flame_digital_value = digitalRead(FLAME_PIN_DIGITAL);
    // flame_analog_value = analogRead(FLAME_PIN_ANALOG);
    

@@ -41,6 +41,7 @@ mqttClient.once("connect", function () {
   // listener message receive
   mqttClient.on("message", async (topic, msg) => {
     try {
+      
       // message receive from MQTT
       const message = JSON.parse(msg.toString()),
         { deviceId, deviceType } = message,
@@ -91,6 +92,7 @@ mqttClient.once("connect", function () {
           insertDataSensorDb({ deviceId, deviceType, MQ2Value });
         } else {
           const { humidityAir, temperature } = message;
+          // console.log(message);
           // Save data sensor to db
           insertDataSensorDb({
             deviceId,
@@ -112,4 +114,3 @@ mqttClient.on("error", function (error) {
 });
 
 module.exports = mqttClient;
-

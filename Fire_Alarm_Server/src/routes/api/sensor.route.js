@@ -6,22 +6,24 @@ const {
   getDataSensor,
   getAllSensorOfDevice,
   getTemperatureTrain,
+  getDataSensorOfDevice
 } = require("../../controllers/sensor.controller");
 const { verifyRoles } = require("../../middlewares/authorize.middleware");
 const ROLES_LIST = require("../../constants/roles.list");
+
+router.get(
+  "/",
+  verifyToken,
+  verifyRoles(ROLES_LIST.User),
+  asyncWrap(getDataSensorOfDevice)
+);
 
 // router.get(
 //   "/",
 //   verifyToken,
 //   verifyRoles(ROLES_LIST.User),
-//   asyncWrap(getSensor)
+//   asyncWrap(getAllSensorOfDevice)
 // );
-router.get(
-  "/",
-  verifyToken,
-  verifyRoles(ROLES_LIST.User),
-  asyncWrap(getAllSensorOfDevice)
-);
 // router.post(
 //   "/get-data",
 //   verifyToken,
