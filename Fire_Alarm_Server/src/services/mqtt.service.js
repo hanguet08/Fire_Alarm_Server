@@ -2,6 +2,7 @@ const mqtt = require("mqtt");
 const console = require("../utils/chalk");
 const smart_home_hat = "smart_home_humidity_and_temperature";
 const smart_home_flame_and_mq2 = "smart_home_flame_and_mq2";
+const smart_home_control_device = "smart_home_control_device";
 const topic_subscribe = [smart_home_hat, smart_home_flame_and_mq2];
 // FCM
 const { sendMessageFCM } = require("./firebase.cloud.message.service");
@@ -41,7 +42,6 @@ mqttClient.once("connect", function () {
   // listener message receive
   mqttClient.on("message", async (topic, msg) => {
     try {
-      
       // message receive from MQTT
       const message = JSON.parse(msg.toString()),
         { deviceId, deviceType } = message,
@@ -113,4 +113,4 @@ mqttClient.on("error", function (error) {
   process.exit(1);
 });
 
-module.exports = mqttClient;
+module.exports = { mqttClient, smart_home_control_device };

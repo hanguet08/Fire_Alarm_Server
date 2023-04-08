@@ -13,6 +13,10 @@ const { getRoomDb } = require("../db/room.db");
 const { getHouseDb } = require("../db/house.db");
 const { checkRoomOfUser } = require("./room.controller");
 const console = require("../utils/chalk");
+const {
+  mqttClient,
+  smart_home_control_device,
+} = require("../services/mqtt.service");
 
 // Get all device of one room
 const getAllDevicesInRoom = async (req, res, next) => {
@@ -203,21 +207,17 @@ const controlDevice = async (req, res, next) => {
   // edit status device
   let device = await controlDeviceDb({ ...req.body, _id });
   if (device) {
-    let message;
-    if (device.status == "ON") {
-      message = "Turn on device";
-    } else {
-      message = "Turn off device";
-    }
-    // const messageControl = {
-    //   deviceId: device._id,
-    //   status: device.status,
-    // };
+    let message = "Control device success";
+    const messageControl = {
+      deviceId: device._id,
+      status: device.status,
+      mode: device.mode,
+    };
     // publish to mqtt
-    // mqttClient.publish(
-    //   smart_home_control_device,
-    //   JSON.stringify(messageControl)
-    // );
+    mqttClient.publish(
+      smart_home_control_device,
+      JSON.stringify(messageControl)
+    );
     return res.status(200).json(
       apiResponse({
         status: APIStatus.SUCCESS,

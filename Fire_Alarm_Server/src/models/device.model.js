@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const deviceStatus = require("../constants/device.status");
 const deviceType = require("../constants/device.type");
+const deviceMode = require("../constants/device.mode");
 
 const deviceSchema = new mongoose.Schema(
   {
@@ -25,6 +26,11 @@ const deviceSchema = new mongoose.Schema(
     position: {
       type: String,
       require: true,
+    },
+    mode: {
+      type: String,
+      enum: deviceMode,
+      default: deviceMode.MANUAL,
     },
   },
   {

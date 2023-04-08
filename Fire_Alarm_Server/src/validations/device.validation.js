@@ -8,12 +8,17 @@ const createDeviceValidation = {
     roomId: Joi.string().required(),
     status: Joi.string().required().valid(deviceStatus.ON, deviceStatus.OFF),
     position: Joi.string().required(),
+    mode: Joi.string(),
     deviceType: Joi.number()
       .required()
       .valid(
         deviceType.FLAME_SENSOR,
         deviceType.MQ2_SENSOR,
-        deviceType.DHT11_SENSOR
+        deviceType.DHT11_SENSOR,
+        deviceType.LIGHT,
+        deviceType.LOCK,
+        deviceType.AIR_CONDITIONER,
+        deviceType.PAN
       ),
   }),
 };
@@ -27,7 +32,11 @@ const editDeviceValidation = {
     deviceType: Joi.number().valid(
       deviceType.FLAME_SENSOR,
       deviceType.MQ2_SENSOR,
-      deviceType.DHT11_SENSOR
+      deviceType.DHT11_SENSOR,
+      deviceType.LIGHT,
+      deviceType.LOCK,
+      deviceType.AIR_CONDITIONER,
+      deviceType.PAN
     ),
   }),
 };
