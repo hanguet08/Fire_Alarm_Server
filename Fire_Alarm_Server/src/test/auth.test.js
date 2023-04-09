@@ -98,11 +98,11 @@ describe("Authentication route", () => {
     });
   });
 
-  describe("/GET", () => {
+  describe("/POST", () => {
     it("/auth/user/logout", (done) => {
       chai
         .request(server)
-        .get("/auth/user/logout")
+        .post("/auth/user/logout")
         .auth(global.accessToken, { type: "bearer" })
         .end((err, res) => {
           res.should.have.status(200);
