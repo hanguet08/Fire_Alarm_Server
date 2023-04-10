@@ -5,16 +5,16 @@
 #include "DHT.h"
 
 // setup wifi
-//const char *ssid = "HangNguyen";    // tên của mạng wifi bạn muốn kết nối đến
-//const char *password = "123456789"; // mật khẩu của mạng wifi
-const char* ssid = "HUAWEI nova 3i";
-const char* password =  "13456789";
+const char *ssid = "Doan Tin";    // tên của mạng wifi bạn muốn kết nối đến
+const char *password = "12345678"; // mật khẩu của mạng wifi
+//const char* ssid = "HUAWEI nova 3i";
+//const char* password =  "13456789";
 
 // hardcode
-char *flame_id = "6415cd65721d6866a1bdd44d";         // "FLAME_ID"
-char *mq2_id = "6413483dedc53875fb617462";           // "MQ2_ID"
-char *humi_and_temp_id = "6404abecf4d81e7a427ff726"; // "HUMI_AND_TEMP_ID"
-char *light_1_id = "6379d0d290a72a5570becd5f";       // control light (led)
+char *flame_id = "6432161c57ac83acaad29205";         // "FLAME_ID"
+char *mq2_id = "6432163557ac83acaad29211";           // "MQ2_ID"
+char *humi_and_temp_id = "6432162b57ac83acaad2920b"; // "HUMI_AND_TEMP_ID"
+char *light_1_id = "6432160d57ac83acaad291ff";       // control light (led)
 
 int flame_type = 1;
 int mq2_type = 2;
@@ -38,7 +38,7 @@ int humi_and_temp_type = 3;
 #define MQ2_PIN_DIGITAL 15
 #define MQ2_PIN_WARNING 18
 #define DHTPIN 19
-#define PHOTOSENSOR_PIN 34 // analog
+#define PHOTOSENSOR_PIN 14 // analog
 
 int previous_status_flame = 1;
 int previous_status_mq2 = 1;
@@ -46,7 +46,7 @@ int gas_analog_value = 4095;
 int gas_digital_value = 1;
 int flame_digital_value = 1;
 int flame_analog_value = 4095;
-int photosensor_analog_value = 0;
+int photosensor_value = 1;
 char *mode_light_1 = "MANUAL";
 unsigned long interval = 60000;    // 60s
 unsigned long interval_DHT = 5000; // 5s
@@ -291,19 +291,24 @@ void loop()
   client.loop();
 
   // liên tục đọc giá trị cảm biến
-  // gas_analog_value = analogRead(MQ2_PIN_ANALOG);
-  // gas_digital_value = digitalRead(MQ2_PIN_DIGITAL);
+   gas_analog_value = analogRead(MQ2_PIN_ANALOG);
+   gas_digital_value = digitalRead(MQ2_PIN_DIGITAL);
   gas_digital_value = 1;
   flame_digital_value = digitalRead(FLAME_PIN_DIGITAL);
-  // flame_analog_value = analogRead(FLAME_PIN_ANALOG);
-  photosensor_analog_value = analogRead(PHOTOSENSOR_PIN);
+   flame_analog_value = analogRead(FLAME_PIN_ANALOG);
+ // photosensor_analog_value = analogRead(PHOTOSENSOR_PIN);
+ photosensor_value = digitalRead(PHOTOSENSOR_PIN);
+
+ Serial.print("photosensor_value: ");
+ Serial.println(photosensor_value);
 
   // Bật tắt đèn tự động
-  if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_analog_value > 2000)
+  // if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_analog_value > 2000)
+   if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_value == 0 )
   {
     digitalWrite(LIGHT_PIN_1, HIGH);
   }
-  else if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_analog_value < 2000)
+  else if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_value == 1)
   {
     digitalWrite(LIGHT_PIN_1, LOW);
   }

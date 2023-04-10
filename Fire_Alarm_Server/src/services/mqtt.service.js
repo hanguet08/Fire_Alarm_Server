@@ -46,8 +46,9 @@ mqttClient.once("connect", function () {
       const message = JSON.parse(msg.toString()),
         { deviceId, deviceType } = message,
         // get info fcmToken
-        device = await getDeviceDb({ _id: deviceId }),
-        statusDevice = device.status,
+        device = await getDeviceDb({ _id: deviceId });
+        console.log(device);
+      const  statusDevice = device.status,
         roomId = device.roomId,
         room = await getRoomDb({ _id: roomId }),
         houseId = room.houseId,
@@ -103,7 +104,8 @@ mqttClient.once("connect", function () {
         }
       }
     } catch (error) {
-      console.error("Error on MQTT service");
+      console.log(error);
+     // console.error("Error on MQTT service");
     }
   });
 });
