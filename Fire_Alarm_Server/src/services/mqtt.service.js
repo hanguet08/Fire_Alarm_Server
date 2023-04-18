@@ -14,6 +14,8 @@ const { getUserDb } = require("../db/user.db");
 const { createNotificationDb } = require("../db/notification.db");
 const DeviceStatus = require("../constants/device.status");
 
+const { insertNotificationFirebase } = require("./dbfirebase.service");
+
 const host_mqtt = "broker.hivemq.com";
 const port_mqtt = "1883";
 const clientId = `8a673344-cc1c-4bfc-9f68-bab47bbbf845`;
@@ -47,8 +49,8 @@ mqttClient.once("connect", function () {
         { deviceId, deviceType } = message,
         // get info fcmToken
         device = await getDeviceDb({ _id: deviceId });
-        console.log(device);
-      const  statusDevice = device.status,
+      console.log(device);
+      const statusDevice = device.status,
         roomId = device.roomId,
         room = await getRoomDb({ _id: roomId }),
         houseId = room.houseId,
@@ -71,6 +73,11 @@ mqttClient.once("connect", function () {
               content: content,
               userId: house.userId,
             });
+            insertNotificationFirebase(
+              device.deviceName,
+              content,
+              house.userId
+            );
           }
           // Lưu giá trị vào db
           insertDataSensorDb({ deviceId, deviceType, flameValue });
@@ -105,7 +112,7 @@ mqttClient.once("connect", function () {
       }
     } catch (error) {
       console.log(error);
-     // console.error("Error on MQTT service");
+      // console.error("Error on MQTT service");
     }
   });
 });

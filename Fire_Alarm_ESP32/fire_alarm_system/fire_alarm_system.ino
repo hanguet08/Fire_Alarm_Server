@@ -5,8 +5,8 @@
 #include "DHT.h"
 
 // setup wifi
-const char *ssid = "Doan Tin";    // tên của mạng wifi bạn muốn kết nối đến
-const char *password = "12345678"; // mật khẩu của mạng wifi
+const char *ssid = "HangNguyen";    // tên của mạng wifi bạn muốn kết nối đến
+const char *password = "123456789"; // mật khẩu của mạng wifi
 //const char* ssid = "HUAWEI nova 3i";
 //const char* password =  "13456789";
 
@@ -263,7 +263,6 @@ void Publish_DHT()
       char buffer_DHT[256];
       mess_publish["humidityAir"] = round(h);
       mess_publish["temperature"] = round(t);
-
       mess_publish["deviceId"] = humi_and_temp_id;
       mess_publish["deviceType"] = humi_and_temp_type;
       Serial.print("humidityAir: ");

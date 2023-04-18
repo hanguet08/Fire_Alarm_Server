@@ -203,7 +203,7 @@ const controlDevice = async (req, res, next) => {
       })
     );
 
-  console.log("control device:", req.body);
+  console.log(req.body);
   // edit status device
   let device = await controlDeviceDb({ ...req.body, _id });
   if (device) {
@@ -214,6 +214,7 @@ const controlDevice = async (req, res, next) => {
       mode: device.mode,
     };
     // publish to mqtt
+    console.log(messageControl);
     mqttClient.publish(
       smart_home_control_device,
       JSON.stringify(messageControl)
