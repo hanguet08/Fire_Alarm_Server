@@ -3,6 +3,7 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include "DHT.h"
+#include <Servo.h>
 
 // setup wifi
 const char *ssid = "HangNguyen";    // tên của mạng wifi bạn muốn kết nối đến
@@ -14,7 +15,12 @@ const char *password = "123456789"; // mật khẩu của mạng wifi
 char *flame_id = "6432161c57ac83acaad29205";         // "FLAME_ID"
 char *mq2_id = "6432163557ac83acaad29211";           // "MQ2_ID"
 char *humi_and_temp_id = "6432162b57ac83acaad2920b"; // "HUMI_AND_TEMP_ID"
-char *light_1_id = "6432160d57ac83acaad291ff";       // control light (led)
+char *light_1_id = "6432160d57ac83acaad291ff";   
+char *servo_id = "6432160d57ac83acaad291gh";
+Servo myservo;  // create servo object to control a servo
+// twelve servo objects can be created on most boards
+
+int pos = 0;      // control light (led)
 
 int flame_type = 1;
 int mq2_type = 2;
@@ -30,7 +36,7 @@ int humi_and_temp_type = 3;
 #define MQTT_TOPIC_PUB_FAM "smart_home_flame_and_mq2"
 #define MQTT_TOPIC_SUB_CONTROL "smart_home_control_device"
 
-#define LIGHT_PIN_1 27
+#define LIGHT_PIN_1 24
 #define FLAME_PIN_ANALOG 13
 #define FLAME_PIN_DIGITAL 25
 #define FLAME_PIN_WARNING 26
@@ -100,6 +106,7 @@ void setup()
 
   digitalWrite(LIGHT_PIN_1, LOW);
   delay(100);
+   myservo.attach(27);
 }
 
 // Hàm kết nối wifi
@@ -143,16 +150,16 @@ void callback(char *topic, byte *payload, unsigned int length)
   deserializeJson(mess_subscribe, messageTemp);
   try
   {
-    if (strcmp(mess_subscribe["deviceId"], "17") == 0)
+    if (!strcmp(mess_subscribe["deviceId"], servo_id))
     {
       Serial.println("door");
-      //      if(strcmp(mess_subscribe["status"], "on") == 0) {
-      //        Serial.println("on");
-      //        myServo.write(150);
-      //      } else if(strcmp(mess_subscribe["status"], "off") == 0) {
-      //        Serial.println("off");
-      //        myServo.write(60);
-      //      }
+           if(strcmp(mess_subscribe["status"], "ON") == 0) {
+             Serial.println("on");
+             myservo.write(180);
+           } else if(strcmp(mess_subscribe["status"], "OFF") == 0) {
+             Serial.println("off");
+             myservo.write(0);
+           }
     }
     else if (!strcmp(mess_subscribe["deviceId"], light_1_id))
     {

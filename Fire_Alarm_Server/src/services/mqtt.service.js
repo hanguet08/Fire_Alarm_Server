@@ -95,6 +95,11 @@ mqttClient.once("connect", function () {
               content: content,
               userId: house.userId,
             });
+            insertNotificationFirebase(
+              device.deviceName,
+              content,
+              house.userId
+            );
           }
           // Save data sensor to db
           insertDataSensorDb({ deviceId, deviceType, MQ2Value });
