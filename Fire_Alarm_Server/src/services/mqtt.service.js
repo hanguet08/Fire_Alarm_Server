@@ -14,7 +14,10 @@ const { getUserDb } = require("../db/user.db");
 const { createNotificationDb } = require("../db/notification.db");
 const DeviceStatus = require("../constants/device.status");
 
-const { insertNotificationFirebase, insertTempratureAndHumidityFirebase } = require("./dbfirebase.service");
+const {
+  insertNotificationFirebase,
+  insertTempratureAndHumidityFirebase,
+} = require("./dbfirebase.service");
 
 const host_mqtt = "broker.hivemq.com";
 const port_mqtt = "1883";
@@ -105,7 +108,6 @@ mqttClient.once("connect", function () {
           insertDataSensorDb({ deviceId, deviceType, MQ2Value });
         } else {
           const { humidityAir, temperature } = message;
-          console.log(1);
           // console.log(message);
           // Save data sensor to db
           insertDataSensorDb({

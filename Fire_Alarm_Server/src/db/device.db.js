@@ -38,7 +38,6 @@ const editDeviceDb = async (query) => {
     deviceForEdit.position = position;
     deviceForEdit.deviceName = deviceName;
     deviceForEdit.deviceType = deviceType;
-
     const rs = await deviceForEdit.save();
     return rs;
   } catch (error) {
