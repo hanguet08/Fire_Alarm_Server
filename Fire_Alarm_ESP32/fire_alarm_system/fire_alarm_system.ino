@@ -3,24 +3,21 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include "DHT.h"
-#include <Servo.h>
 
 // setup wifi
-const char *ssid = "HangNguyen";    // tên của mạng wifi bạn muốn kết nối đến
-const char *password = "123456789"; // mật khẩu của mạng wifi
+const char *ssid = "HangNguyen";     // tên của mạng wifi bạn muốn kết nối đến
+const char *password = "123456789";  // mật khẩu của mạng wifi
 //const char* ssid = "HUAWEI nova 3i";
 //const char* password =  "13456789";
 
 // hardcode
-char *flame_id = "6432161c57ac83acaad29205";         // "FLAME_ID"
-char *mq2_id = "6432163557ac83acaad29211";           // "MQ2_ID"
-char *humi_and_temp_id = "6432162b57ac83acaad2920b"; // "HUMI_AND_TEMP_ID"
-char *light_1_id = "6432160d57ac83acaad291ff";   
-char *servo_id = "6432160d57ac83acaad291gh";
-Servo myservo;  // create servo object to control a servo
+char *flame_id = "6432161c57ac83acaad29205";          // "FLAME_ID"
+char *mq2_id = "6432163557ac83acaad29211";            // "MQ2_ID"
+char *humi_and_temp_id = "6432162b57ac83acaad2920b";  // "HUMI_AND_TEMP_ID"
+char *light_1_id = "6432160d57ac83acaad291ff";
 // twelve servo objects can be created on most boards
 
-int pos = 0;      // control light (led)
+int pos = 0;  // control light (led)
 
 int flame_type = 1;
 int mq2_type = 2;
@@ -36,7 +33,7 @@ int humi_and_temp_type = 3;
 #define MQTT_TOPIC_PUB_FAM "smart_home_flame_and_mq2"
 #define MQTT_TOPIC_SUB_CONTROL "smart_home_control_device"
 
-#define LIGHT_PIN_1 24
+#define LIGHT_PIN_1 27
 #define FLAME_PIN_ANALOG 13
 #define FLAME_PIN_DIGITAL 25
 #define FLAME_PIN_WARNING 26
@@ -44,7 +41,7 @@ int humi_and_temp_type = 3;
 #define MQ2_PIN_DIGITAL 15
 #define MQ2_PIN_WARNING 18
 #define DHTPIN 19
-#define PHOTOSENSOR_PIN 14 // analog
+#define PHOTOSENSOR_PIN 14  // analog
 
 int previous_status_flame = 1;
 int previous_status_mq2 = 1;
@@ -54,9 +51,9 @@ int flame_digital_value = 1;
 int flame_analog_value = 4095;
 int photosensor_value = 1;
 char *mode_light_1 = "MANUAL";
-unsigned long interval = 60000;    // 60s
-unsigned long interval_DHT = 5000; // 5s
-unsigned long interval_warning = 10000;
+unsigned long interval = 10000;     // 60s
+unsigned long interval_DHT = 1000;  // 5s
+unsigned long interval_warning = 2000;
 unsigned long previousMillis;
 // cấp phát bộ nhớ tại chỗ
 StaticJsonDocument<200> mess_publish;
@@ -77,61 +74,56 @@ struct
   char *onStatus;
   char *offStatus;
 } statusDevice;
-void setup_device()
-{
+void setup_device() {
   modeDevice.manualMode = "MANUAL";
   modeDevice.autoMode = "AUTO";
   statusDevice.onStatus = "ON";
   statusDevice.offStatus = "OFF";
 }
 
-void setup()
-{
-  Serial.begin(115200); // Khởi tạo kết nối Serial để truyền dữ liệu đến máy tính
-  setup_wifi();         // gọi hàm setup wifi
+void setup() {
+  Serial.begin(115200);  // Khởi tạo kết nối Serial để truyền dữ liệu đến máy tính
+  setup_wifi();          // gọi hàm setup wifi
   setup_device();
-  pinMode(FLAME_PIN_ANALOG, INPUT); // thiết lập chân số 13 là chân nhận tín hiệu
+  dht.begin();
+  pinMode(FLAME_PIN_ANALOG, INPUT);  // thiết lập chân số 13 là chân nhận tín hiệu
   pinMode(MQ2_PIN_ANALOG, INPUT);
   pinMode(FLAME_PIN_DIGITAL, INPUT);
   pinMode(MQ2_PIN_DIGITAL, INPUT);
   // thiết lập chân số 26 là chân xuất tín hiệu
-  pinMode(FLAME_PIN_WARNING, OUTPUT); // led or buzzer
-  pinMode(MQ2_PIN_WARNING, OUTPUT);   // led or buzzer
+  pinMode(FLAME_PIN_WARNING, OUTPUT);  // led or buzzer
+  pinMode(MQ2_PIN_WARNING, OUTPUT);    // led or buzzer
   pinMode(LIGHT_PIN_1, OUTPUT);
   pinMode(PHOTOSENSOR_PIN, INPUT);
 
   // set up MQTT
   client.setServer(MQTT_SERVER, MQTT_PORT);
-  client.setCallback(callback); // sử dụng cho nhận message MQTT
+  client.setCallback(callback);  // sử dụng cho nhận message MQTT
 
   digitalWrite(LIGHT_PIN_1, LOW);
   delay(100);
-   myservo.attach(27);
 }
 
 // Hàm kết nối wifi
-void setup_wifi()
-{
+void setup_wifi() {
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
-  WiFi.begin(ssid, password); // kết nối vào mạng wifi
+  WiFi.begin(ssid, password);  // kết nối vào mạng wifi
   // chờ kết nối wifi được thiết lập
-  while (WiFi.status() != WL_CONNECTED)
-  {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
-  Serial.println(WiFi.localIP()); // gửi địa chỉ ip đến máy tính
+  Serial.println(WiFi.localIP());  // gửi địa chỉ ip đến máy tính
   delay(1000);
 }
 
 // Hàm call back để nhận dữ liệu
-void callback(char *topic, byte *payload, unsigned int length)
-{
+void callback(char *topic, byte *payload, unsigned int length) {
   Serial.println("------- New message from broker -----");
   Serial.print("topic: ");
   Serial.println(topic);
@@ -140,86 +132,47 @@ void callback(char *topic, byte *payload, unsigned int length)
   char *messageTemp;
   messageTemp = (char *)malloc((length + 1) * sizeof(char));
   memset(messageTemp, 0, length + 1);
-  for (int i = 0; i < length; i++)
-  {
+  for (int i = 0; i < length; i++) {
     messageTemp[i] = (char)payload[i];
   }
   Serial.println(messageTemp);
 
   // thực hiện chuyển từ string sang JSON
   deserializeJson(mess_subscribe, messageTemp);
-  try
-  {
-    if (!strcmp(mess_subscribe["deviceId"], servo_id))
-    {
-      Serial.println("door");
-           if(strcmp(mess_subscribe["status"], "ON") == 0) {
-             Serial.println("on");
-             myservo.write(180);
-           } else if(strcmp(mess_subscribe["status"], "OFF") == 0) {
-             Serial.println("off");
-             myservo.write(0);
-           }
-    }
-    else if (!strcmp(mess_subscribe["deviceId"], light_1_id))
-    {
-      if (!strcmp(mess_subscribe["mode"], modeDevice.manualMode))
-      {
+  try {
+    if (!strcmp(mess_subscribe["deviceId"], light_1_id)) {
+      if (!strcmp(mess_subscribe["mode"], modeDevice.manualMode)) {
         mode_light_1 = modeDevice.manualMode;
-        if (!strcmp(mess_subscribe["status"], statusDevice.onStatus))
-        {
+        if (!strcmp(mess_subscribe["status"], statusDevice.onStatus)) {
           Serial.println("ON ledPin1");
           digitalWrite(LIGHT_PIN_1, HIGH);
-        }
-        else if (!strcmp(mess_subscribe["status"], statusDevice.offStatus))
-        {
+        } else if (!strcmp(mess_subscribe["status"], statusDevice.offStatus)) {
           Serial.println("OFF ledPin1");
           digitalWrite(LIGHT_PIN_1, LOW);
         }
         Serial.println("ledPin1 is mode MANUAL");
-      }
-      else
-      {
+      } else {
         mode_light_1 = modeDevice.autoMode;
         Serial.println("ledPin1 is mode AUTO");
       }
-    }
-    else if (strcmp(mess_subscribe["deviceId"], "3") == 0)
-    {
-      //      if(strcmp(mess_subscribe["status"], "on") == 0) {
-      //      Serial.println("on ledPin3");
-      //      digitalWrite(ledPin3, HIGH);
-      //      } else if(strcmp(mess_subscribe["status"], "off") == 0) {
-      //        Serial.println("off ledPin3");
-      //        digitalWrite(ledPin3, LOW);
-      //      }
-    }
-    else
-    {
+    }  else {
       Serial.println("khong ton tai thiet bi");
     }
-  }
-  catch (const std::exception &e)
-  {
+  } catch (const std::exception &e) {
     Serial.println("Invalid task.");
   }
 }
 
 // Hàm reconnect thực hiện kết nối lại khi mất kết nối với MQTT Broker
-void reconnect()
-{
-  while (!client.connected())
-  {
+void reconnect() {
+  while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     String clientId = "nodeWiFi32";
     clientId += String(random(0xffff), HEX);
-    if (client.connect(clientId.c_str(), MQTT_USER, MQTT_PASSWORD))
-    {
+    if (client.connect(clientId.c_str(), MQTT_USER, MQTT_PASSWORD)) {
       Serial.println("connected");
       client.subscribe(MQTT_TOPIC_SUB_CONTROL);
-    }
-    else
-    {
+    } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 2 seconds");
@@ -228,8 +181,7 @@ void reconnect()
   }
 }
 
-void Publish_Flame(int value)
-{
+void Publish_Flame(int value) {
   char buffer_flame[256];
   mess_publish["deviceId"] = flame_id;
   mess_publish["deviceType"] = flame_type;
@@ -240,8 +192,7 @@ void Publish_Flame(int value)
   delay(100);
 }
 
-void Publish_Mq2(int value)
-{
+void Publish_Mq2(int value) {
   char buffer_mq2[256];
   mess_publish["deviceId"] = mq2_id;
   mess_publish["deviceType"] = mq2_type;
@@ -252,70 +203,63 @@ void Publish_Mq2(int value)
 }
 
 // Publish nhiệt độ, độ ẩm
-void Publish_DHT()
-{
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval_DHT)
-  {
+void Publish_DHT() {
+  unsigned long currentMillis = millis(); 
+  if (currentMillis - previousMillis >= interval_DHT) {
     float h = dht.readHumidity();
     float t = dht.readTemperature();
     // Check if any reads failed and exit early (to try again).
-    if (isnan(h) || isnan(t))
-    {
+    if (isnan(h) || isnan(t)) {
       delay(500);
+      Serial.print("Humidity and temperature is invalid");
       return;
-    }
-    else
-    {
-      char buffer_DHT[256];
-      mess_publish["humidityAir"] = round(h);
-      mess_publish["temperature"] = round(t);
-      mess_publish["deviceId"] = humi_and_temp_id;
-      mess_publish["deviceType"] = humi_and_temp_type;
-      Serial.print("humidityAir: ");
-      Serial.println(h);
-      Serial.print("temperature: ");
-      Serial.println(t);
-      serializeJson(mess_publish, buffer_DHT);
-      client.publish(MQTT_TOPIC_PUB_HAT, buffer_DHT);
-      delay(100);
-      previousMillis = currentMillis;
+    } else {
+        char buffer_DHT[256];
+        mess_publish["humidityAir"] = round(h);
+        mess_publish["temperature"] = round(t);
+        
+        mess_publish["deviceId"] = humi_and_temp_id;
+        mess_publish["deviceType"] = humi_and_temp_type;
+        Serial.print("humidityAir: ");
+        Serial.println(h);
+        Serial.print("temperature: ");
+        Serial.println(t);
+        serializeJson(mess_publish, buffer_DHT);
+        client.publish(MQTT_TOPIC_PUB_HAT, buffer_DHT);
+        delay(100);
+        previousMillis = currentMillis;
     }
   }
 }
 
-void loop()
-{
+void loop() {
   // lấy thời gian hiện tại (theo đơn vị milli giây)
   unsigned long currentMillis = millis();
 
   // liên tục kiểm tra kết nối MQTT
-  if (!client.connected())
-  {
+  if (!client.connected()) {
     reconnect();
   }
   client.loop();
 
   // liên tục đọc giá trị cảm biến
-   gas_analog_value = analogRead(MQ2_PIN_ANALOG);
-   gas_digital_value = digitalRead(MQ2_PIN_DIGITAL);
+  gas_analog_value = analogRead(MQ2_PIN_ANALOG);
+  gas_digital_value = digitalRead(MQ2_PIN_DIGITAL);
   gas_digital_value = 1;
   flame_digital_value = digitalRead(FLAME_PIN_DIGITAL);
-   flame_analog_value = analogRead(FLAME_PIN_ANALOG);
- // photosensor_analog_value = analogRead(PHOTOSENSOR_PIN);
- photosensor_value = digitalRead(PHOTOSENSOR_PIN);
+  flame_digital_value = 1;
+  flame_analog_value = analogRead(FLAME_PIN_ANALOG);
+  // photosensor_analog_value = analogRead(PHOTOSENSOR_PIN);
+  photosensor_value = digitalRead(PHOTOSENSOR_PIN);
 
- Serial.print("photosensor_value: ");
- Serial.println(photosensor_value);
+  Serial.print("photosensor_value: ");
+  Serial.println(photosensor_value);
 
   // Bật tắt đèn tự động
   // if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_analog_value > 2000)
-   if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_value == 0 )
-  {
+  if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_value == 0) {
     digitalWrite(LIGHT_PIN_1, HIGH);
-  }
-  else if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_value == 1)
-  {
+  } else if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_value == 1) {
     digitalWrite(LIGHT_PIN_1, LOW);
   }
 
@@ -329,45 +273,31 @@ void loop()
   // chênh lệch giữa thời gian hiện tại và lần trước bạn nhấp nháy
   // đèn LED lớn hơn khoảng thời gian bạn muốn
   // nhấp nháy đèn LED.
-  if (flame_digital_value == LOW)
-  {
-    if (previous_status_flame == 1 || currentMillis - previousMillis >= interval)
-    {
-      digitalWrite(FLAME_PIN_WARNING, HIGH); // cập nhật led thực tế
+  if (flame_digital_value == 0) {
+    if (previous_status_flame == 1 || currentMillis - previousMillis >= interval) {
+      digitalWrite(FLAME_PIN_WARNING, HIGH);  // cập nhật led thực tế
       Publish_Flame(flame_digital_value);
       // lưu lại lần cuối cùng nhấp nháy đền led
-      previousMillis = currentMillis;
+      previousMillis = currentMillis; // cap nhat previous
       previous_status_flame = 0;
-    }
-    else
-      previousMillis = currentMillis;
-  }
-  else
-  {
-    if (currentMillis - previousMillis >= interval_warning)
-    {
+    };
+  } else {
+    if (currentMillis - previousMillis >= interval_warning) {
       digitalWrite(FLAME_PIN_WARNING, LOW);
       previous_status_flame = 1;
       delay(50);
     }
   }
 
-  if (gas_digital_value == 0)
-  {
-    if (previous_status_mq2 == 1 || currentMillis - previousMillis >= interval)
-    {
+  if (gas_digital_value == 0) {
+    if (previous_status_mq2 == 1 || currentMillis - previousMillis >= interval) {
       digitalWrite(MQ2_PIN_WARNING, HIGH);
       Publish_Mq2(gas_digital_value);
       previousMillis = currentMillis;
       previous_status_mq2 = 0;
-    }
-    else
-      previousMillis = currentMillis;
-  }
-  else
-  {
-    if (currentMillis - previousMillis >= interval_warning)
-    {
+    } 
+  } else {
+    if (currentMillis - previousMillis >= interval_warning) {
       digitalWrite(MQ2_PIN_WARNING, LOW);
       previous_status_mq2 = 1;
       delay(50);
@@ -375,11 +305,11 @@ void loop()
   }
 
   // sau 1 khoảng thời gian (interval) luôn publish
-  if (currentMillis - previousMillis >= interval)
-  {
+  if (currentMillis - previousMillis >= interval) {
     Publish_Flame(flame_digital_value);
     delay(1000);
     Publish_Mq2(gas_digital_value);
+    delay(1000);
     previousMillis = currentMillis;
   }
 
