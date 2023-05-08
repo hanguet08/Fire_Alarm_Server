@@ -7,8 +7,6 @@
 // setup wifi
 const char *ssid = "HangNguyen";     // tên của mạng wifi bạn muốn kết nối đến
 const char *password = "123456789";  // mật khẩu của mạng wifi
-//const char* ssid = "HUAWEI nova 3i";
-//const char* password =  "13456789";
 
 // hardcode
 char *flame_id = "6432161c57ac83acaad29205";          // "FLAME_ID"
@@ -51,10 +49,12 @@ int flame_digital_value = 1;
 int flame_analog_value = 4095;
 int photosensor_value = 1;
 char *mode_light_1 = "MANUAL";
-unsigned long interval = 10000;     // 60s
-unsigned long interval_DHT = 1000;  // 5s
-unsigned long interval_warning = 2000;
-unsigned long previousMillis;
+unsigned long interval = 30000;     // 30s
+unsigned long interval_DHT = 5000;  // 5s
+unsigned long interval_warning = 10000;
+unsigned long previousMillisDht;
+unsigned long previousMillisFlame;
+unsigned long previousMillisMq;
 // cấp phát bộ nhớ tại chỗ
 StaticJsonDocument<200> mess_publish;
 StaticJsonDocument<200> mess_subscribe;
@@ -99,7 +99,6 @@ void setup() {
   // set up MQTT
   client.setServer(MQTT_SERVER, MQTT_PORT);
   client.setCallback(callback);  // sử dụng cho nhận message MQTT
-
   digitalWrite(LIGHT_PIN_1, LOW);
   delay(100);
 }
@@ -205,7 +204,7 @@ void Publish_Mq2(int value) {
 // Publish nhiệt độ, độ ẩm
 void Publish_DHT() {
   unsigned long currentMillis = millis(); 
-  if (currentMillis - previousMillis >= interval_DHT) {
+  if (currentMillis - previousMillisDht >= interval_DHT) {
     float h = dht.readHumidity();
     float t = dht.readTemperature();
     // Check if any reads failed and exit early (to try again).
@@ -227,9 +226,10 @@ void Publish_DHT() {
         serializeJson(mess_publish, buffer_DHT);
         client.publish(MQTT_TOPIC_PUB_HAT, buffer_DHT);
         delay(100);
-        previousMillis = currentMillis;
+        previousMillisDht = currentMillis;
     }
   }
+   
 }
 
 void loop() {
@@ -245,10 +245,10 @@ void loop() {
   // liên tục đọc giá trị cảm biến
   gas_analog_value = analogRead(MQ2_PIN_ANALOG);
   gas_digital_value = digitalRead(MQ2_PIN_DIGITAL);
-  gas_digital_value = 1;
+  //gas_digital_value= 1;
   flame_digital_value = digitalRead(FLAME_PIN_DIGITAL);
-  flame_digital_value = 1;
   flame_analog_value = analogRead(FLAME_PIN_ANALOG);
+ // flame_digital_value = 1;
   // photosensor_analog_value = analogRead(PHOTOSENSOR_PIN);
   photosensor_value = digitalRead(PHOTOSENSOR_PIN);
 
@@ -256,7 +256,6 @@ void loop() {
   Serial.println(photosensor_value);
 
   // Bật tắt đèn tự động
-  // if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_analog_value > 2000)
   if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_value == 0) {
     digitalWrite(LIGHT_PIN_1, HIGH);
   } else if (!strcmp(mode_light_1, modeDevice.autoMode) && photosensor_value == 1) {
@@ -274,15 +273,15 @@ void loop() {
   // đèn LED lớn hơn khoảng thời gian bạn muốn
   // nhấp nháy đèn LED.
   if (flame_digital_value == 0) {
-    if (previous_status_flame == 1 || currentMillis - previousMillis >= interval) {
+    if (previous_status_flame == 1 || currentMillis - previousMillisFlame >= interval) {
       digitalWrite(FLAME_PIN_WARNING, HIGH);  // cập nhật led thực tế
       Publish_Flame(flame_digital_value);
       // lưu lại lần cuối cùng nhấp nháy đền led
-      previousMillis = currentMillis; // cap nhat previous
+      previousMillisFlame = currentMillis; // cap nhat previous
       previous_status_flame = 0;
     };
   } else {
-    if (currentMillis - previousMillis >= interval_warning) {
+    if (currentMillis - previousMillisFlame >= interval_warning) {
       digitalWrite(FLAME_PIN_WARNING, LOW);
       previous_status_flame = 1;
       delay(50);
@@ -290,14 +289,14 @@ void loop() {
   }
 
   if (gas_digital_value == 0) {
-    if (previous_status_mq2 == 1 || currentMillis - previousMillis >= interval) {
+    if (previous_status_mq2 == 1 || currentMillis - previousMillisMq >= interval) {
       digitalWrite(MQ2_PIN_WARNING, HIGH);
       Publish_Mq2(gas_digital_value);
-      previousMillis = currentMillis;
+      previousMillisMq = currentMillis;
       previous_status_mq2 = 0;
     } 
   } else {
-    if (currentMillis - previousMillis >= interval_warning) {
+    if (currentMillis - previousMillisMq >= interval_warning) {
       digitalWrite(MQ2_PIN_WARNING, LOW);
       previous_status_mq2 = 1;
       delay(50);
@@ -305,12 +304,24 @@ void loop() {
   }
 
   // sau 1 khoảng thời gian (interval) luôn publish
-  if (currentMillis - previousMillis >= interval) {
+  // if (currentMillis - previousMillis >= interval) {
+  //   Publish_Flame(flame_digital_value);
+  //   delay(1000);
+  //   Publish_Mq2(gas_digital_value);
+  //   delay(1000);
+  //   previousMillis = currentMillis;
+  // }
+  if (currentMillis - previousMillisFlame >= interval) {
     Publish_Flame(flame_digital_value);
     delay(1000);
+    previousMillisFlame = currentMillis;
+  }
+
+    if (currentMillis - previousMillisMq >= interval) {
     Publish_Mq2(gas_digital_value);
+    //Publish_Flame(flame_digital_value);
     delay(1000);
-    previousMillis = currentMillis;
+    previousMillisMq = currentMillis;
   }
 
   Publish_DHT();
